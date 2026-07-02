@@ -1,9 +1,9 @@
-/* Design System & Variables */
+/* Sistem desain dan variabel */
 :root {
   --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Colors */
+  /* Warna */
   --bg-main: #0b0f19;
   --bg-panel: rgba(17, 25, 40, 0.65);
   --border-color: rgba(255, 255, 255, 0.08);
@@ -30,7 +30,7 @@
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Reset & Base Styles */
+/* Atur ulang dan gaya dasar */
 * {
   margin: 0;
   padding: 0;
@@ -47,7 +47,7 @@ body {
   line-height: 1.5;
 }
 
-/* Glow Background Effects */
+/* Efek cahaya latar belakang */
 .bg-glow {
   position: fixed;
   width: 50vw;
@@ -83,7 +83,7 @@ body {
   100% { transform: translate(-10%, -5%) scale(0.9); }
 }
 
-/* App Container & Typography */
+/* Kontainer aplikasi dan tipografi */
 .app-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -152,7 +152,7 @@ body {
   color: var(--text-secondary);
 }
 
-/* App Grid Layout */
+/* Tata letak grid aplikasi */
 .app-grid {
   display: grid;
   grid-template-columns: 1.1fr 1.3fr;
@@ -160,7 +160,7 @@ body {
   align-items: start;
 }
 
-/* Sticky left panel on desktop */
+/* Panel kiri dibuat tetap terlihat di desktop */
 .panel-input {
   position: sticky;
   top: 1.5rem;
@@ -177,7 +177,7 @@ body {
   }
 }
 
-/* Glassmorphism Panels */
+/* Panel bergaya kaca buram */
 .panel {
   background: var(--bg-panel);
   border: 1px solid var(--border-color);
@@ -208,7 +208,7 @@ body {
   font-size: 0.875rem;
 }
 
-/* Size Controller & Selector */
+/* Pengatur dan pilihan ukuran */
 .control-row {
   display: flex;
   align-items: center;
@@ -256,12 +256,12 @@ body {
   box-shadow: 0 0 12px var(--blue-glow);
 }
 
-/* Matrix Inputs Configuration */
+/* Pengaturan input matriks */
 .matrix-scroll-wrapper {
   overflow-x: auto;
   padding-bottom: 0.5rem;
   margin-bottom: 1.5rem;
-  /* Custom scrollbar for matrix */
+  /* Scrollbar khusus untuk matriks */
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,0.15) transparent;
 }
@@ -280,7 +280,7 @@ body {
   padding: 0.25rem;
   margin: 0 auto;
   width: 100%;
-  min-width: fit-content; /* allows table to grow without clipping */
+  min-width: fit-content; /* membuat tabel bisa melebar tanpa terpotong */
 }
 
 .matrix-table {
@@ -349,13 +349,13 @@ body {
   box-shadow: 0 0 10px rgba(239, 68, 68, 0.25);
 }
 
-/* Augmented Matrix Divider */
+/* Pembatas matriks augmented */
 .matrix-table td.rhs-cell, .matrix-table th.rhs-header {
   border-left: 2px dashed rgba(255, 255, 255, 0.15);
   padding-left: 0.5rem;
 }
 
-/* Responsive: compact matrix on mobile */
+/* Responsif: matriks lebih ringkas di layar kecil */
 @media (max-width: 640px) {
   .matrix-cell {
     width: 48px;
@@ -374,7 +374,7 @@ body {
   }
 }
 
-/* Action Buttons styling */
+/* Gaya tombol aksi */
 .action-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr 1.2fr;
@@ -434,7 +434,7 @@ body {
   color: white;
 }
 
-/* Output & Steps styling */
+/* Gaya output dan langkah penyelesaian */
 .output-placeholder {
   display: flex;
   flex-direction: column;
@@ -471,7 +471,7 @@ body {
   font-size: 0.875rem;
 }
 
-/* Results Content */
+/* Konten hasil */
 .result-content {
   animation: fadeIn var(--transition-normal);
 }
@@ -481,7 +481,7 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Final Answers Box */
+/* Kotak jawaban akhir */
 .final-answers-box {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.08));
   border: 1px solid rgba(16, 185, 129, 0.25);
@@ -543,7 +543,7 @@ body {
   color: white;
 }
 
-/* Steps Visualization Timeline */
+/* Linimasa visualisasi langkah */
 .steps-header {
   display: flex;
   justify-content: space-between;
@@ -620,7 +620,7 @@ body {
   margin-bottom: 1rem;
 }
 
-/* Matrix Display inside steps */
+/* Tampilan matriks di dalam langkah */
 .step-matrix-wrapper {
   background: rgba(0, 0, 0, 0.25);
   border: 1px solid var(--border-color);
@@ -645,7 +645,7 @@ body {
   transition: all var(--transition-fast);
 }
 
-/* Step matrix cell coloring rules */
+/* Aturan warna sel matriks pada langkah */
 .step-cell {
   width: 64px;
   height: 36px;
@@ -659,7 +659,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Highlighting in step matrix */
+/* Penanda warna pada matriks langkah */
 .step-matrix-row.pivot-row {
   background: rgba(251, 191, 36, 0.06);
   border: 1px dashed rgba(251, 191, 36, 0.3);
@@ -685,7 +685,7 @@ body {
   background: rgba(255, 255, 255, 0.01);
 }
 
-/* Row Formula visual box */
+/* Kotak visual rumus operasi baris */
 .step-formula-box {
   background: rgba(255, 255, 255, 0.02);
   border-left: 3px solid var(--accent-blue);
@@ -708,7 +708,7 @@ body {
   color: var(--accent-purple);
 }
 
-/* App Footer styling */
+/* Gaya bagian bawah aplikasi */
 .app-footer {
   text-align: center;
   color: var(--text-muted);
@@ -718,7 +718,7 @@ body {
   border-top: 1px solid var(--border-color);
 }
 
-/* Animations & Transitions */
+/* Animasi dan transisi */
 .matrix-row {
   animation: slideIn var(--transition-normal);
 }

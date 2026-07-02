@@ -46,7 +46,7 @@ di mana `m = a[i][k] / a[k][k]` disebut **pengali (multiplier)**.
 | No | Fitur | Keterangan |
 |----|-------|------------|
 | 1 | **Grid Matriks Dinamis** | Ukuran dapat dipilih dari 2×2 hingga 6×6 |
-| 2 | **Partial Pivoting** | Otomatis menukar baris untuk stabilitas numerik |
+| 2 | **Pivoting Parsial** | Otomatis menukar baris untuk stabilitas numerik |
 | 3 | **Validasi Input** | Mengecek angka kosong atau format tidak valid sebelum perhitungan |
 | 4 | **Navigasi Keyboard** | Arrow key, Tab, Enter untuk navigasi antar sel |
 | 5 | **Acak Nilai** | Generate angka acak untuk percobaan cepat |
@@ -65,7 +65,7 @@ INPUT
        v
 ELIMINASI MAJU (Forward Elimination)
   -> Untuk k = 0 hingga N-1:
-       |- [Partial Pivoting] Cari baris i >= k dengan |a[i][k]| terbesar
+       |- [Pivoting Parsial] Cari baris i >= k dengan |a[i][k]| terbesar
        |- Tukar baris k dengan baris i (jika berbeda)
        -> Untuk setiap baris i > k:
             |- Hitung pengali: m = a[i][k] / a[k][k]
@@ -87,13 +87,13 @@ OUTPUT
 
 ---
 
-## 🛡️ Slide 6 — Partial Pivoting
+## 🛡️ Slide 6 — Pivoting Parsial
 
 **Masalah tanpa pivoting:**
 Jika elemen pivot `a[k][k] = 0`, terjadi pembagian dengan nol => error.
 Bahkan jika kecil (misal `0.0001`), bisa terjadi **galat pembulatan besar**.
 
-**Solusi — Partial Pivoting:**
+**Solusi — Pivoting Parsial:**
 1. Pada setiap kolom pivot ke-`k`, cari baris dengan nilai **|a[i][k]| terbesar**
 2. Tukar baris tersebut ke posisi pivot
 3. Lanjutkan eliminasi dengan elemen pivot lebih besar => **hasil lebih stabil**
@@ -172,7 +172,7 @@ m31 = -2/2 = -1.0  =>  R3 <- R3 - (-1.0)*R1  =>  [0,   2,   1 |  5]
 
 ## ✅ Slide 11 — Kesimpulan
 
-1. **Berhasil mengimplementasikan** Eliminasi Gauss dengan Partial Pivoting secara akurat
+1. **Berhasil mengimplementasikan** Eliminasi Gauss dengan pivoting parsial secara akurat
 2. **Visualisasi langkah-langkah** membantu memahami proses eliminasi secara intuitif
 3. **Antarmuka interaktif** dengan validasi input & navigasi keyboard meningkatkan UX
 4. **Deteksi kasus khusus** — matriks singular terdeteksi dan dilaporkan ke pengguna

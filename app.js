@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // --- DOM Elements ---
+  // --- Elemen DOM ---
   const matrixContainer = document.getElementById('matrix-container');
   const sizeButtons = document.querySelectorAll('.btn-size');
   const btnRandomize = document.getElementById('btn-randomize');
@@ -11,40 +11,40 @@ document.addEventListener('DOMContentLoaded', () => {
   const stepCountBadge = document.getElementById('step-count');
   const stepsTimeline = document.getElementById('steps-timeline');
 
-  // --- App State ---
-  let N = 3; // Default matrix size (3x3)
-  let activeCell = null; // Currently focused input element
+  // --- Kondisi Aplikasi ---
+  let N = 3; // Ukuran matriks awal (3x3)
+  let activeCell = null; // Sel input yang sedang aktif
   const EPSILON = 1e-9;
 
-  // --- Initialize App ---
+  // --- Inisialisasi Aplikasi ---
   initMatrixGrid();
   setupEventListeners();
 
-  // --- Dynamic Grid Generation ---
+  // --- Pembuatan Grid Dinamis ---
   function initMatrixGrid() {
     matrixContainer.innerHTML = '';
     
     const table = document.createElement('table');
     table.className = 'matrix-table';
 
-    // 1. Create table head (thead)
+    // 1. Membuat kepala tabel (thead)
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     
-    // Corner empty cell
+    // Sel kosong di pojok kiri atas
     const cornerTh = document.createElement('th');
     cornerTh.className = 'row-header';
     cornerTh.innerHTML = 'SPL';
     headerRow.appendChild(cornerTh);
 
-    // Header cells for variables x_1 to x_N
+    // Header untuk variabel x_1 sampai x_N
     for (let c = 0; c < N; c++) {
       const th = document.createElement('th');
       th.innerHTML = `x<sub>${c + 1}</sub>`;
       headerRow.appendChild(th);
     }
 
-    // Header cell for constant b
+    // Header untuk konstanta b
     const rhsTh = document.createElement('th');
     rhsTh.className = 'rhs-header';
     rhsTh.innerHTML = 'b (Konstanta)';
@@ -53,19 +53,19 @@ document.addEventListener('DOMContentLoaded', () => {
     thead.appendChild(headerRow);
     table.appendChild(thead);
 
-    // 2. Create table body (tbody)
+    // 2. Membuat isi tabel (tbody)
     const tbody = document.createElement('tbody');
     
     for (let r = 0; r < N; r++) {
       const row = document.createElement('tr');
 
-      // Row name header
+      // Header nama baris
       const rowNameTh = document.createElement('th');
       rowNameTh.className = 'row-header';
       rowNameTh.innerHTML = `B<sub>${r + 1}</sub>`;
       row.appendChild(rowNameTh);
 
-      // Coefficients input (col 0 to N-1)
+      // Input koefisien (kolom 0 sampai N-1)
       for (let c = 0; c < N; c++) {
         const td = document.createElement('td');
         const input = document.createElement('input');
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         row.appendChild(td);
       }
 
-      // Constant term input (col N)
+      // Input konstanta (kolom N)
       const rhsTd = document.createElement('td');
       rhsTd.className = 'rhs-cell';
       
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     table.appendChild(tbody);
     matrixContainer.appendChild(table);
     
-    // Auto-focus first cell
+    // Fokus otomatis ke sel pertama
     focusCell(0, 0);
   }
 
@@ -141,9 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- Navigation Handlers ---
+  // --- Pengatur Navigasi ---
   function setupEventListeners() {
-    // 1. Size buttons
+    // 1. Tombol ukuran matriks
     sizeButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         sizeButtons.forEach(b => b.classList.remove('active'));
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // 2. Clear Matrix
+    // 2. Membersihkan matriks
     btnClear.addEventListener('click', () => {
       const inputs = matrixContainer.querySelectorAll('.matrix-cell');
       inputs.forEach(input => {
@@ -163,18 +163,18 @@ document.addEventListener('DOMContentLoaded', () => {
       focusCell(0, 0);
     });
 
-    // 3. Randomize Matrix
+    // 3. Mengisi matriks dengan nilai acak
     btnRandomize.addEventListener('click', () => {
       for (let r = 0; r < N; r++) {
         for (let c = 0; c <= N; c++) {
           const input = matrixContainer.querySelector(`input[data-row="${r}"][data-col="${c}"]`);
           if (input) {
-            // Coefficients: non-zero diagonal preferred, values between -9 and 9
+            // Koefisien: diagonal dibuat tidak nol, nilai lain antara -9 sampai 9
             let val;
             if (r === c) {
-              val = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 8) + 2); // 2 to 9, or -9 to -2
+              val = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 8) + 2); // 2 sampai 9, atau -9 sampai -2
             } else {
-              val = Math.floor(Math.random() * 19) - 9; // -9 to 9
+              val = Math.floor(Math.random() * 19) - 9; // -9 sampai 9
             }
             input.value = val;
           }
@@ -183,10 +183,10 @@ document.addEventListener('DOMContentLoaded', () => {
       focusCell(0, 0);
     });
 
-    // 4. Solve click
+    // 4. Tombol selesaikan
     btnSolve.addEventListener('click', solveGauss);
 
-    // 5. Support physical keyboard navigation inside cells
+    // 5. Mendukung navigasi keyboard fisik di dalam sel
     matrixContainer.addEventListener('keydown', (e) => {
       if (!activeCell) return;
       const r = parseInt(activeCell.dataset.row, 10);
@@ -230,10 +230,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let nextRow = r;
     if (nextCol < 0) {
       nextRow = r - 1;
-      nextCol = N; // Wrap to RHS of previous row
+      nextCol = N; // Pindah ke kolom konstanta pada baris sebelumnya
     } else if (nextCol > N) {
       nextRow = r + 1;
-      nextCol = 0; // Wrap to start of next row
+      nextCol = 0; // Pindah ke awal baris berikutnya
     }
 
     if (nextRow >= 0 && nextRow < N) {
@@ -241,10 +241,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- Mathematics Helpers ---
+  // --- Bantuan Perhitungan Matematika ---
   function formatNum(num) {
     if (Math.abs(num) < 1e-12) return '0';
-    // Format to max 4 decimal places, trim trailing zeroes
+    // Format maksimal 4 angka di belakang koma, lalu hapus nol di akhir
     return parseFloat(num.toFixed(4)).toString();
   }
 
@@ -298,9 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // --- Gauss Elimination Solver ---
+  // --- Penyelesai Eliminasi Gauss ---
   function solveGauss() {
-    // 1. Read and parse inputs
+    // 1. Membaca dan memvalidasi input
     clearInputErrors();
     const M = [];
     for (let r = 0; r < N; r++) {
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const steps = [];
     
-    // Helper to push step log
+    // Bantuan untuk menyimpan log setiap langkah
     function logStep(type, description, matrixState, details = {}) {
       steps.push({
         type,
@@ -334,15 +334,15 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Push initial matrix state
+    // Menyimpan kondisi awal matriks
     logStep('init', 'Matriks augmented awal dari persamaan linear yang diinput.', M);
 
-    // Forward Elimination with Partial Pivoting
+    // Eliminasi maju dengan pivoting parsial
     let M_elim = M.map(r => [...r]);
     let success = true;
 
     for (let k = 0; k < N; k++) {
-      // 1. Partial Pivoting
+      // 1. Pivoting parsial
       let maxVal = Math.abs(M_elim[k][k]);
       let maxRow = k;
       
@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // If maximum element in this column is close to zero, it means matrix is singular or singular-ish
+      // Jika elemen terbesar di kolom ini mendekati nol, matriks tidak punya solusi tunggal
       if (maxVal < EPSILON) {
         logStep('pivoting-step', `Gagal melanjutkan: Kolom ke-${k+1} bernilai nol untuk seluruh baris di bawahnya. Matriks tidak memiliki solusi tunggal.`, M_elim, {
           pivotRow: k,
@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       }
 
-      // Swap row k and maxRow if they are different
+      // Tukar baris k dengan maxRow jika posisinya berbeda
       if (maxRow !== k) {
         const temp = M_elim[k];
         M_elim[k] = M_elim[maxRow];
@@ -378,27 +378,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // 2. Eliminate entries below pivot element M_elim[k][k]
+      // 2. Mengeliminasi elemen di bawah pivot M_elim[k][k]
       for (let i = k + 1; i < N; i++) {
         const elimTarget = M_elim[i][k];
         if (Math.abs(elimTarget) < EPSILON) {
-          // Already zero, skip
+          // Sudah nol, jadi tidak perlu dihitung ulang
           continue;
         }
 
         // Simpan nilai asli sebelum dimodifikasi
         const factor = elimTarget / M_elim[k][k];
 
-        // Perform operation: R_i = R_i - factor * R_k
+        // Melakukan operasi: R_i = R_i - factor * R_k
         // Mulai dari j=k+1 karena kolom k akan dipaksa 0 secara eksplisit
         for (let j = k + 1; j <= N; j++) {
           M_elim[i][j] = M_elim[i][j] - factor * M_elim[k][j];
         }
-        M_elim[i][k] = 0; // Force exact zero to prevent floating-point drift
+        M_elim[i][k] = 0; // Paksa menjadi nol agar tidak terkena galat floating-point
 
         logStep('elimination-step',
           `Mengeliminasi elemen di <strong>Baris ${i + 1}, Kolom ${k + 1}</strong>. ` +
-          `Pengali (Multiplier) $m = \\frac{${formatNum(elimTarget)}}{${formatNum(M_elim[k][k])}} = ${formatNum(factor)}$.`,
+          `Pengali $m = \\frac{${formatNum(elimTarget)}}{${formatNum(M_elim[k][k])}} = ${formatNum(factor)}$.`,
           M_elim, {
             pivotRow: k,
             pivotCol: k,
@@ -415,17 +415,17 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Back Substitution
+    // Substitusi mundur
     const X = new Array(N).fill(0);
     
-    // Check if bottom-right element is zero
+    // Cek apakah elemen kanan bawah bernilai nol
     if (Math.abs(M_elim[N - 1][N - 1]) < EPSILON) {
       const classification = classifyNoUniqueSystem(M_elim);
       renderFailure(classification.title, classification.message);
       return;
     }
 
-    // Back substitution loop
+    // Perulangan substitusi mundur
     for (let i = N - 1; i >= 0; i--) {
       let sum = 0;
       let exprTerms = [];
@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       X[i] = (M_elim[i][N] - sum) / M_elim[i][i];
 
-      // Format description for back substitution step
+      // Format penjelasan untuk langkah substitusi mundur
       let desc = `Menghitung nilai $x_{${i+1}}$ dari Baris ${i+1}:<br>`;
       
       // Bentuk persamaan: a[i][i]*x_{i+1} + ... = b[i]
@@ -467,11 +467,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // 3. Render Results
+    // 3. Menampilkan hasil
     renderResults(X, steps);
   }
 
-  // --- Rendering Functions ---
+  // --- Fungsi Tampilan ---
   function renderFailure(title, message) {
     outputPlaceholder.style.display = 'flex';
     resultContent.style.display = 'none';
@@ -493,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
     outputPlaceholder.style.display = 'none';
     resultContent.style.display = 'block';
 
-    // 1. Fill final answer variables
+    // 1. Mengisi kartu hasil akhir variabel
     variablesResult.innerHTML = '';
     X.forEach((val, idx) => {
       const card = document.createElement('div');
@@ -505,10 +505,10 @@ document.addEventListener('DOMContentLoaded', () => {
       variablesResult.appendChild(card);
     });
 
-    // 2. Step count badge
+    // 2. Badge jumlah langkah
     stepCountBadge.textContent = `${steps.length - 1} Langkah`;
 
-    // 3. Populate steps timeline
+    // 3. Mengisi timeline langkah penyelesaian
     stepsTimeline.innerHTML = '';
     
     steps.forEach((step, idx) => {
@@ -519,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (step.type === 'backsub-step') stepClass += ' backsub-step';
       stepItem.className = stepClass;
 
-      // Header
+      // Judul langkah
       const stepHeader = document.createElement('h4');
       stepHeader.className = 'step-title';
       if (step.type === 'init') {
@@ -531,25 +531,25 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       stepItem.appendChild(stepHeader);
 
-      // Description
+      // Deskripsi langkah
       const stepDesc = document.createElement('p');
       stepDesc.className = 'step-description';
       stepDesc.innerHTML = formatLatexSimple(step.description);
       stepItem.appendChild(stepDesc);
 
-      // Matrix visualization container
+      // Wadah visualisasi matriks
       const matrixWrapper = document.createElement('div');
       matrixWrapper.className = 'step-matrix-wrapper';
 
       const matrixGrid = document.createElement('div');
       matrixGrid.className = 'step-matrix';
       
-      // Render the matrix at this step
+      // Menampilkan matriks pada langkah ini
       step.matrixState.forEach((row, rIdx) => {
         const rowDiv = document.createElement('div');
         rowDiv.className = 'step-matrix-row';
         
-        // Highlight row if it is active pivot row or target row
+        // Menandai baris pivot atau baris target yang sedang diproses
         if (step.type === 'pivoting-step' && (rIdx === step.pivotRow || rIdx === step.swappedWith)) {
           rowDiv.classList.add('pivot-row');
         } else if (step.type === 'elimination-step' && rIdx === step.pivotRow) {
@@ -561,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
           cellDiv.className = 'step-cell';
           cellDiv.textContent = formatNum(val);
 
-          // Highlights inside cell
+          // Penanda warna di dalam sel
           if (step.type === 'elimination-step') {
             if (rIdx === step.pivotRow && cIdx === step.pivotCol) {
               cellDiv.classList.add('active-pivot');
@@ -582,7 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           rowDiv.appendChild(cellDiv);
 
-          // Visual line separator for augmented column
+          // Garis pemisah visual untuk kolom augmented
           if (cIdx === N - 1) {
             const stepSep = document.createElement('div');
             stepSep.className = 'augmented-separator';
@@ -597,7 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
       matrixWrapper.appendChild(matrixGrid);
       stepItem.appendChild(matrixWrapper);
 
-      // Formula output
+      // Tampilan rumus operasi
       if (step.formula) {
         const formulaDiv = document.createElement('div');
         formulaDiv.className = 'step-formula-box';
@@ -608,11 +608,11 @@ document.addEventListener('DOMContentLoaded', () => {
       stepsTimeline.appendChild(stepItem);
     });
 
-    // Scroll automatically to results smoothly
+    // Gulir otomatis ke bagian hasil
     document.getElementById('output-section').scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Format the small subset of LaTeX-like syntax used in the step explanations.
+  // Memformat sebagian kecil sintaks mirip LaTeX yang dipakai di penjelasan langkah.
   function formatLatexSimple(text) {
     const formatted = text.replace(/\$([^\$]+)\$/g, (match, formula) => {
       return `<span style="font-family: var(--font-mono); font-weight: 600; color: #60a5fa;">${cleanMathSyntax(formula)}</span>`;

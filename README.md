@@ -19,7 +19,7 @@ Project ini dibuat untuk tugas Mata Kuliah Metode Numerik.
 
 - Input matriks augmented dengan ukuran 2x2 sampai 6x6.
 - Penyelesaian SPL menggunakan Eliminasi Gauss.
-- Partial pivoting untuk memilih pivot yang lebih stabil.
+- Pivoting parsial untuk memilih pivot yang lebih stabil.
 - Visualisasi langkah eliminasi dan substitusi mundur.
 - Validasi input agar nilai kosong atau format tidak valid tidak ikut dihitung.
 - Deteksi sistem yang tidak memiliki solusi atau tidak memiliki solusi tunggal.
@@ -66,7 +66,7 @@ Metode Eliminasi Gauss menyelesaikan SPL dengan mengubah matriks augmented `[A|b
 Tahapan utama:
 
 1. Membaca input matriks augmented.
-2. Melakukan partial pivoting untuk memilih baris pivot terbaik.
+2. Melakukan pivoting parsial untuk memilih baris pivot terbaik.
 3. Mengeliminasi elemen di bawah pivot agar menjadi nol.
 4. Mengecek apakah sistem memiliki solusi unik.
 5. Menghitung nilai variabel dari baris terakhir ke baris pertama.
