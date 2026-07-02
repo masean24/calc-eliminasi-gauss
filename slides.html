@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presentasi GaussElim - Metode Numerik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --bg-main: #0b0f19;
+      --bg-panel: rgba(13, 20, 35, 0.95);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-primary: #f3f4f6;
+      --text-secondary: #a1a1aa;
+      --text-muted: #6b7280;
+      --accent-blue: #3b82f6;
+      --accent-purple: #a855f7;
+      --accent-success: #10b981;
+      --radius-lg: 16px;
+      --radius-md: 8px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Minimalist Grid Pattern Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* Subtle background accent */
+    .bg-blur {
+      position: fixed;
+      width: 40vw;
+      height: 40vw;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+      top: -10%;
+      right: -10%;
+      filter: blur(80px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Main Slides Container */
+    .slides-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* Minimalist Slide Card */
+    .slide {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 1100px;
+      height: 620px;
+      padding: 3.5rem 4rem;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      position: absolute;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+      position: relative;
+    }
+
+    /* Header Styling */
+    .slide-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent-purple);
+      margin-bottom: 0.75rem;
+    }
+
+    .slide-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 1rem;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Slide Content Layouts */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      gap: 3.5rem;
+    }
+
+    /* Column Configurations */
+    .col-left {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .col-right {
+      flex: 0.8;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Bullet List style */
+    .bullet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .bullet-item {
+      display: flex;
+      gap: 1.2rem;
+    }
+
+    .bullet-num {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      flex-shrink: 0;
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .bullet-content h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      color: var(--text-primary);
+    }
+
+    .bullet-content p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Clean Code/Math Block */
+    .math-block {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+      white-space: pre; /* Mencegah pembungkusan huruf vertikal */
+      overflow-x: auto;
+    }
+
+    .math-title {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.75rem;
+      font-family: var(--font-main);
+      font-weight: 700;
+    }
+
+    .math-highlight {
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    /* Slide Footer / Navigation Bar */
+    .slides-footer {
+      padding: 1.5rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      background: rgba(9, 13, 22, 0.95);
+      z-index: 10;
+    }
+
+    .slides-info {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .slide-controls {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .control-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .control-btn:hover:not(:disabled) {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: white;
+    }
+
+    .control-btn:disabled {
+      opacity: 0.2;
+      cursor: not-allowed;
+    }
+
+    .slide-counter {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* Live Demo Card Box */
+    .demo-box {
+      text-align: center;
+      background: rgba(59, 130, 246, 0.03);
+      border: 1px solid rgba(59, 130, 246, 0.15);
+      padding: 3rem 2rem;
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .demo-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: white;
+      text-decoration: none;
+      padding: 0.8rem 2.2rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-top: 1.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+    }
+
+    .demo-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-blur"></div>
+
+  <!-- Container Slides -->
+  <div class="slides-container">
+
+    <!-- SLIDE 1: Cover -->
+    <div class="slide active" id="slide-1">
+      <div>
+        <div class="slide-badge">MATA KULIAH METODE NUMERIK</div>
+        <h1 class="slide-title">Kalkulator <span class="gradient-text">Eliminasi Gauss</span> & Pivoting</h1>
+      </div>
+      <div class="slide-body">
+        <div class="col-left">
+          <div class="bullet-list">
+            <div class="bullet-item">
+              <div class="bullet-num">1</div>
+              <div class="bullet-content">
+                <h3>Penyelesaian Sistem Persamaan Linear (SPL)</h3>
+                <p>Mengubah persamaan linear dinamis (ordo 2x2 hingga 6x6) menjadi solusi numerik presisi.</p>
+              </div>
+            </div>
+            <div class="bullet-item">
+              <div class="bullet-num">2</div>
+              <div class="bullet-content">
+                <h3>Visualisasi Alur & Rumus</h3>
+                <p>Menjelaskan langkah pengerjaan augmented matriks baris-per-baris dengan multiplier yang transparan.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-right">
+          <div class="math-block"><div class="math-title">Struktur SPL Augmented</div>[ a11  a12  a13 | b1 ]
+[ a21  a22  a23 | b2 ]
+[ a31  a32  a33 | b3 ]
+
+<span class="math-highlight">// Target Segitiga Atas</span>
+[ a11  a12  a13 | b1 ]
+[  0   a22  a23 | b2 ]
+[  0    0   a33 | b3 ]</div>
+        </div>
+      </div>
+      <div style="font-size: 0.8rem; color: var(--text-muted);">
+        * Gunakan tombol arah panah &larr; &rarr; pada keyboard untuk pindah slide.
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Teori Eliminasi Gauss -->
+    <div class="slide" id="slide-2">
+      <div>
+        <div class="slide-badge">Teori Metode Numerik</div>
+        <h1 class="slide-title">Konsep Dasar <span class="gradient-text">Eliminasi Gauss</span></h1>
+      </div>
+      <div class="slide-body">
+        <div class="col-left">
+          <div class="bullet-list">
+            <div class="bullet-item">
+              <div class="bullet-num">A</div>
+              <div class="bullet-content">
+                <h3>Fase 1: Eliminasi Maju (Forward Elimination)</h3>
+                <p>Proses eliminasi elemen koefisien di bawah diagonal utama kolom demi kolom dengan Operasi Baris Elementer (OBE) untuk membentuk matriks segitiga atas.</p>
+              </div>
+            </div>
+            <div class="bullet-item">
+              <div class="bullet-num">B</div>
+              <div class="bullet-content">
+                <h3>Fase 2: Substitusi Mundur (Back Substitution)</h3>
+                <p>Penyelesaian nilai variabel yang tidak diketahui secara berurutan, dimulai dari baris paling bawah naik secara berantai ke atas.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-right">
+          <div class="math-block"><div class="math-title">Tahapan Substitusi</div>x3 = b3 / a33
+
+x2 = (b2 - a23 * x3) / a22
+
+x1 = (b1 - a12*x2 - a13*x3) / a11</div>
+        </div>
+      </div>
+      <div></div>
+    </div>
+
+    <!-- SLIDE 3: Operasi Baris & Multiplier -->
+    <div class="slide" id="slide-3">
+      <div>
+        <div class="slide-badge">Teori Persamaan</div>
+        <h1 class="slide-title">Operasi Baris & <span class="gradient-text">Faktor Pengali</span></h1>
+      </div>
+      <div class="slide-body">
+        <div class="col-left">
+          <div class="bullet-list">
+            <div class="bullet-item">
+              <div class="bullet-num">1</div>
+              <div class="bullet-content">
+                <h3>Multiplier (Faktor Pengali)</h3>
+                <p>Rasio elemen target eliminasi terhadap elemen pivot diagonal pada kolom aktif.<br>
+                <code style="color: var(--accent-blue); font-family: var(--font-mono);">m = a[i][k] / a[k][k]</code></p>
+              </div>
+            </div>
+            <div class="bullet-item">
+              <div class="bullet-num">2</div>
+              <div class="bullet-content">
+                <h3>Operasi Baris Elementer (OBE)</h3>
+                <p>Baris target dikurangi dengan baris pivot yang telah dikalikan dengan faktor pengali:<br>
+                <code style="color: var(--accent-blue); font-family: var(--font-mono);">R_i &larr; R_i - m &times; R_k</code></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-right">
+          <div class="math-block"><div class="math-title">Contoh Kasus OBE</div>Baris Aktif (R1): [ 2  4  -2 |  8 ]
+Baris Target (R2): [ 4  1   2 | 16 ]
+
+Faktor Pengali (m) = 4 / 2 = 2
+
+Operasi: R2 - (2 &times; R1)
+R2 &larr; [ 4-4  1-8  2-(-4) | 16-16 ]
+R2 &larr; [  0   -7     6    |   0  ]</div>
+        </div>
+      </div>
+      <div></div>
+    </div>
+
+    <!-- SLIDE 4: Teori Partial Pivoting -->
+    <div class="slide" id="slide-4">
+      <div>
+        <div class="slide-badge">Stabilitas Numerik</div>
+        <h1 class="slide-title">Mengapa Perlu <span class="gradient-text">Partial Pivoting</span>?</h1>
+      </div>
+      <div class="slide-body">
+        <div class="col-left">
+          <div class="bullet-list">
+            <div class="bullet-item">
+              <div class="bullet-num">1</div>
+              <div class="bullet-content">
+                <h3>Mencegah Pembagian dengan Nol</h3>
+                <p>Jika elemen diagonal utama bernilai nol (<code>a[k][k] = 0</code>), faktor pengali (m) tidak dapat dihitung (pembagian tidak terdefinisi).</p>
+              </div>
+            </div>
+            <div class="bullet-item">
+              <div class="bullet-num">2</div>
+              <div class="bullet-content">
+                <h3>Mengurangi Galat Pembulatan</h3>
+                <p>Menggunakan elemen pivot bernilai kecil mendekati nol menghasilkan pengali yang sangat besar. Ini memperbesar kesalahan pembulatan angka desimal (round-off error).</p>
+              </div>
+            </div>
+            <div class="bullet-item">
+              <div class="bullet-num">3</div>
+              <div class="bullet-content">
+                <h3>Solusi Pivoting</h3>
+                <p>Memindai seluruh baris di bawah kolom aktif, mencari nilai absolut terbesar, lalu menukar baris tersebut ke baris pivot diagonal sebelum eliminasi.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-right">
+          <div class="math-block"><div class="math-title">Skema Penukaran Baris</div>Kolom Pivot ke-1 aktif:
+[  0.002   4.000 | 8.00 ] -> pivot kecil
+[  5.000  -2.000 | 6.00 ]
+
+Tukar Baris (R1 &harr; R2) untuk stabilitas:
+[  5.000  -2.000 | 6.00 ]
+[  0.002   4.000 | 8.00 ]</div>
+        </div>
+      </div>
+      <div></div>
+    </div>
+
+    <!-- SLIDE 5: Demonstrasi Aplikasi -->
+    <div class="slide" id="slide-5">
+      <div>
+        <div class="slide-badge">Kesimpulan & Demo</div>
+        <h1 class="slide-title">Uji Coba Kalkulator <span class="gradient-text">GaussElim</span></h1>
+      </div>
+      <div class="slide-body">
+        <div class="col-left">
+          <div class="bullet-list">
+            <div class="bullet-item">
+              <div class="bullet-num">&check;</div>
+              <div class="bullet-content">
+                <h3>Responsif & Tanpa Library</h3>
+                <p>Dibuat murni menggunakan HTML5, CSS3, dan Vanilla JS tanpa framework agar performa rendering cepat dan stabil.</p>
+              </div>
+            </div>
+            <div class="bullet-item">
+              <div class="bullet-num">&check;</div>
+              <div class="bullet-content">
+                <h3>Sistem Kontrol Dinamis</h3>
+                <p>Ubah dimensi matriks augmented (2x2 sampai 6x6) secara instan, serta dukung navigasi sel dengan keyboard.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-right">
+          <div class="demo-box">
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;" class="gradient-text">Live Demo</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.4;">Buka aplikasi utama untuk mendemonstrasikan penyelesaian SPL secara langsung.</p>
+            <a href="index.html" class="demo-btn">Mulai Demonstrasi</a>
+          </div>
+        </div>
+      </div>
+      <div></div>
+    </div>
+
+  </div>
+
+  <!-- Slides Footer -->
+  <div class="slides-footer">
+    <div class="slides-info">
+      <strong>Kalkulator GaussElim</strong> | Proyek Metode Numerik
+    </div>
+    <div class="slide-controls">
+      <button class="control-btn" id="prev-btn" aria-label="Slide sebelumnya" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <span class="slide-counter" id="slide-num">1 / 5</span>
+      <button class="control-btn" id="next-btn" aria-label="Slide berikutnya">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const slideNum = document.getElementById('slide-num');
+    
+    let currentSlide = 0;
+
+    function updateSlides() {
+      slides.forEach((slide, index) => {
+        if (index === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      slideNum.textContent = `${currentSlide + 1} / ${slides.length}`;
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === slides.length - 1;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      }
+    });
+
+    // Keyboard Navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        }
+      } else if (e.key === 'ArrowLeft') {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
