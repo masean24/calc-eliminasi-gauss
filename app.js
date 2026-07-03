@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const stepsTimeline = document.getElementById('steps-timeline');
 
   // --- Kondisi Aplikasi ---
-  let N = 3; // Ukuran matriks awal (3x3)
+  let N = 3; // Ukuran matriks awal (3x3)a
   let activeCell = null; // Sel input yang sedang aktif
   const EPSILON = 1e-9;
 
