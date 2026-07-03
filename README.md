@@ -4,10 +4,10 @@
 
 | No | Nama | NIM |
 | --- | --- | --- |
-| 1 | Nama Anggota 1 | NIM Anggota 1 |
-| 2 | Nama Anggota 2 | NIM Anggota 2 |
-| 3 | Nama Anggota 3 | NIM Anggota 3 |
-| 4 | Nama Anggota 4 | NIM Anggota 4 |
+| 1 | Raihan Daris Ramadhan | 202431033 |
+| 2 | Wulan Zahra Annisa | 202431038 |
+| 3 | Khalil Amin Adillah | 202431059 |
+| 4 | Mgs. M. Fahim Rahmatullah | 202431168 |
 
 ## Deskripsi
 
