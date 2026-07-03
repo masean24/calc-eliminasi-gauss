@@ -92,8 +92,6 @@ metnum/
 |-- style.css        # Styling dan layout aplikasi
 |-- app.js           # Logika input, eliminasi Gauss, dan render hasil
 |-- favicon.svg      # Ikon tab browser aplikasi
-|-- PRESENTASI.md    # Materi presentasi project
-|-- slides.html      # File slide presentasi
 `-- README.md        # Dokumentasi project
 ```
 
